@@ -105,24 +105,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_playground_middleware_express__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphql_playground_middleware_express__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var apollo_server_express__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! apollo-server-express */ "apollo-server-express");
 /* harmony import */ var apollo_server_express__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(apollo_server_express__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _src_schema__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./src/schema */ "./src/schema/index.js");
 
 
 
 
-const typeDefs = apollo_server_express__WEBPACK_IMPORTED_MODULE_3__["gql"]`
-  type Query {
-    hello: String
-  }
-`;
-const resolvers = {
-  Query: {
-    hello: () => 'world'
-  }
-};
+
 const app = express__WEBPACK_IMPORTED_MODULE_0___default()();
 const server = new apollo_server_express__WEBPACK_IMPORTED_MODULE_3__["ApolloServer"]({
-  typeDefs,
-  resolvers,
+  schema: _src_schema__WEBPACK_IMPORTED_MODULE_4__["default"],
   path: '/graphql'
 });
 server.applyMiddleware({
@@ -133,6 +124,101 @@ app.get('/playground', graphql_playground_middleware_express__WEBPACK_IMPORTED_M
 }));
 const handler = serverless_http__WEBPACK_IMPORTED_MODULE_1___default()(app);
 
+
+/***/ }),
+
+/***/ "./src/api/todo.js":
+/*!*************************!*\
+  !*** ./src/api/todo.js ***!
+  \*************************/
+/*! exports provided: getTodo, getTodos */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTodo", function() { return getTodo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTodos", function() { return getTodos; });
+const getTodo = async id => {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`);
+  const data = await res.json();
+  return data;
+};
+const getTodos = async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+  const data = await res.json();
+  return data;
+};
+
+/***/ }),
+
+/***/ "./src/schema/index.js":
+/*!*****************************!*\
+  !*** ./src/schema/index.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var graphql_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tools */ "graphql-tools");
+/* harmony import */ var graphql_tools__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tools__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _todo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./todo */ "./src/schema/todo.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(graphql_tools__WEBPACK_IMPORTED_MODULE_0__["makeExecutableSchema"])({
+  typeDefs: _todo__WEBPACK_IMPORTED_MODULE_1__["typeDefs"],
+  resolvers: { ..._todo__WEBPACK_IMPORTED_MODULE_1__["resolvers"]
+  }
+}));
+
+/***/ }),
+
+/***/ "./src/schema/todo.js":
+/*!****************************!*\
+  !*** ./src/schema/todo.js ***!
+  \****************************/
+/*! exports provided: typeDefs, resolvers */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "typeDefs", function() { return typeDefs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resolvers", function() { return resolvers; });
+/* harmony import */ var apollo_server_express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! apollo-server-express */ "apollo-server-express");
+/* harmony import */ var apollo_server_express__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(apollo_server_express__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _api_todo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../api/todo */ "./src/api/todo.js");
+
+
+const typeDefs = apollo_server_express__WEBPACK_IMPORTED_MODULE_0__["gql"]`
+  type Query {
+    getTodo(id: String!): Todo!
+    getTodos: [Todo]!
+  }
+
+  type Todo {
+    userId: Int!
+    id: Int!
+    title: String!
+    completed: Boolean!
+  }
+`;
+const resolvers = {
+  Query: {
+    async getTodo(root, params) {
+      const {
+        id
+      } = params;
+      const data = await Object(_api_todo__WEBPACK_IMPORTED_MODULE_1__["getTodo"])(id);
+      return data;
+    },
+
+    async getTodos() {
+      const data = await Object(_api_todo__WEBPACK_IMPORTED_MODULE_1__["getTodos"])();
+      return data;
+    }
+
+  }
+};
 
 /***/ }),
 
@@ -166,6 +252,17 @@ module.exports = require("express");
 /***/ (function(module, exports) {
 
 module.exports = require("graphql-playground-middleware-express");
+
+/***/ }),
+
+/***/ "graphql-tools":
+/*!********************************!*\
+  !*** external "graphql-tools" ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("graphql-tools");
 
 /***/ }),
 

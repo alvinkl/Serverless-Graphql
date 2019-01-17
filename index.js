@@ -1,25 +1,14 @@
 import express from 'express';
 import serverless from 'serverless-http';
 import graphiql from 'graphql-playground-middleware-express';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
 
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'world'
-  }
-};
+import Schema from './src/schema';
 
 const app = express();
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema: Schema,
   path: '/graphql'
 });
 
